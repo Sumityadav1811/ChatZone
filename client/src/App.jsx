@@ -8,6 +8,7 @@ import ChatApp from "./pages/ChatApp";
 import { io } from "socket.io-client";
 
 const App = () => {
+  const API = import.meta.env.VITE_API_BASE_URL;
   const { SelectedUser, setSelectedUser, socket, setSocket } =
     useContext(userContext);
 
@@ -17,7 +18,7 @@ const App = () => {
       const parsedUser = JSON.parse(storedUser);
       setSelectedUser(parsedUser);
 
-      const newSocket = io("http://localhost:5000", {
+      const newSocket = io(`${API}`, {
         query: { user_name: parsedUser.user_name },
       });
       setSocket(newSocket);

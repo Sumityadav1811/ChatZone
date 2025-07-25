@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 
 const Signup = () => {
+  const API = import.meta.env.VITE_API_BASE_URL;
   const navigate = useNavigate();
   const { socket, setSelectedUser, setSocket } = useContext(userContext);
   const [form, setform] = useState({
@@ -23,10 +24,7 @@ const Signup = () => {
     try {
       e.preventDefault();
       console.log(form);
-      const response = await axios.post(
-        "http://localhost:5000/api/users/register",
-        form
-      );
+      const response = await axios.post(`${API}/api/users/register`, form);
       console.log("response received in signup", response.data);
       if (response.data.success) {
         setSelectedUser(response.data.user);
@@ -34,7 +32,7 @@ const Signup = () => {
           "SelectedUser",
           JSON.stringify(response.data.user)
         );
-        const socketInstance = io("http://localhost:5000", {
+        const socketInstance = io(`${API}`, {
           query: { user_name: response.data.user.user_name },
         });
 

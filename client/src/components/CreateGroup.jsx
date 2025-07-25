@@ -5,15 +5,15 @@ const CreateGroup = ({ currentUser, setcreategroup }) => {
   const [groupName, setGroupName] = useState("");
   const [users, setUsers] = useState([]); // List of all users
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const API = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         console.log("fetching users in create group");
-        const res = await axios.post(
-          "http://localhost:5000/api/users/getusers",
-          { id: currentUser._id }
-        );
+        const res = await axios.post(`${API}/api/users/getusers`, {
+          id: currentUser._id,
+        });
         setUsers(res.data.data);
         console.log("users fetched are ", res.data.data);
       } catch (err) {
@@ -38,13 +38,10 @@ const CreateGroup = ({ currentUser, setcreategroup }) => {
     }
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/rooms/createroom",
-        {
-          name: groupName,
-          userIds: [...selectedUsers, currentUser._id], // include self
-        }
-      );
+      const res = await axios.post(`${API}/api/rooms/createroom`, {
+        name: groupName,
+        userIds: [...selectedUsers, currentUser._id], // include self
+      });
 
       alert("Group Created!");
       setcreategroup((prev) => !prev);

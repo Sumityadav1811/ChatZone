@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import CreateGroup from "./CreateGroup";
 
 const Friends = () => {
+  const API = import.meta.env.VITE_API_BASE_URL;
   const navigate = useNavigate();
   const { SelectedUser, setSelectedUser, socket, setSocket, setSelectedRoom } =
     useContext(userContext);
@@ -29,10 +30,9 @@ const Friends = () => {
 
   const fetchOtherUsers = async (e) => {
     try {
-      const response = await axios.post(
-        `http://localhost:5000/api/users/getusers/`,
-        { id: SelectedUser._id }
-      );
+      const response = await axios.post(`${API}/api/users/getusers/`, {
+        id: SelectedUser._id,
+      });
       setotherusers(response.data.data);
       console.log(response.data);
     } catch (error) {
@@ -42,7 +42,7 @@ const Friends = () => {
   const fetchOtherGroups = async (e) => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/rooms/getrooms/${SelectedUser._id}`
+        `${API}/api/rooms/getrooms/${SelectedUser._id}`
       );
       console.log("Groups fetched Successfully");
       setGroups(res.data.groups);

@@ -4,6 +4,7 @@ import axios from "axios";
 import img from "../assets/bg.png";
 
 const ChatSection = () => {
+  const API = import.meta.env.VITE_API_BASE_URL;
   const [input, setinput] = useState("");
   const [messages, setMessages] = useState([]);
   const { SelectedRoom, SelectedUser, socket } = useContext(userContext);
@@ -20,10 +21,7 @@ const ChatSection = () => {
             sender: SelectedUser._id,
             receiver: SelectedRoom._id,
           };
-      const response = await axios.post(
-        "http://localhost:5000/api/messages/getchats",
-        data
-      );
+      const response = await axios.post(`${API}/api/messages/getchats`, data);
       setMessages(response.data.messages);
       console.log(response.data.messages);
     } catch (error) {
@@ -77,10 +75,7 @@ const ChatSection = () => {
             receiver: SelectedRoom._id,
           };
       if (input.trim()) {
-        const response = await axios.post(
-          "http://localhost:5000/api/messages/send",
-          data
-        );
+        const response = await axios.post(`${API}/api/messages/send`, data);
         const roomId = [SelectedUser._id, SelectedRoom._id].sort().join("_");
 
         isGroup

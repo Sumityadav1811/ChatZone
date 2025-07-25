@@ -5,6 +5,7 @@ import userContext from "../components/userContext.jsx";
 import { io } from "socket.io-client";
 
 const Loginpage = () => {
+  const API = import.meta.env.VITE_API_BASE_URL;
   const navigate = useNavigate();
   const { setSelectedUser, setSocket } = useContext(userContext);
   const [message, setmessage] = useState("");
@@ -13,18 +14,15 @@ const Loginpage = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    const response = await axios.post(
-      "http://localhost:5000/api/users/signin",
-      {
-        user_name,
-        password,
-      }
-    );
+    const response = await axios.post(`${API}/api/users/signin`, {
+      user_name,
+      password,
+    });
     if (response.data.success) {
       setSelectedUser(response.data.user);
       localStorage.setItem("SelectedUser", JSON.stringify(response.data.user));
 
-      const socketInstance = io("http://localhost:5000", {
+      const socketInstance = io(`${API}`, {
         query: { user_name: response.data.user.user_name },
       });
       setSocket(socketInstance);
