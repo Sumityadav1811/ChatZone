@@ -11,31 +11,22 @@ import { Server } from "socket.io";
 dotenv.config();
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:5173", // ✅ for local dev
-  "https://chatozone.netlify.app", // ✅ for production
-];
-
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("CORS Not Allowed"));
-      }
-    },
-    credentials: true, // ⚠️ required for cookies/auth in future
+    origin: ["http://localhost:5173", "https://chatozone.netlify.app"],
+    credentials: true,
   })
 );
+
 app.use(express.json());
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*", // your React frontend
+    origin: ["http://localhost:5173", "https://chatozone.netlify.app"],
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
