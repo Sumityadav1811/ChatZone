@@ -24,6 +24,8 @@ const Loginpage = () => {
 
       const socketInstance = io(`${API}`, {
         query: { user_name: response.data.user.user_name },
+        transports: ["websocket"],
+        withCredentials: true,
       });
       setSocket(socketInstance);
 
