@@ -11,8 +11,11 @@ import { Server } from "socket.io";
 dotenv.config();
 const app = express();
 
-// === DYNAMIC CORS HANDLING ===
-const allowedOrigins = ["http://localhost:5173"];
+// === Allowed Origins ===
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://yourproject.netlify.app", // optional for later
+];
 
 app.use(
   cors({
@@ -33,7 +36,6 @@ app.use(
 
 app.use(express.json());
 
-// === HTTP + Socket.IO setup ===
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -46,7 +48,7 @@ const io = new Server(server, {
       ) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by Socket.io CORS"));
+        callback(new Error("Socket.io CORS Error"));
       }
     },
     methods: ["GET", "POST"],
@@ -54,13 +56,12 @@ const io = new Server(server, {
   },
 });
 
-// === DB + Routes ===
 connectDB();
+
 app.use("/api/users", userRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/rooms", roomRoutes);
 
-// === Socket.IO events ===
 io.on("connection", (socket) => {
   const userId = socket.handshake.query.user_name;
   console.log("✅ User connected:", userId);
@@ -76,13 +77,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send_private_message", ({ roomId, message }) => {
-    const messageWithRoom = { ...message, roomId };
-    io.to(roomId).emit("receive_message", messageWithRoom);
+    io.to(roomId).emit("receive_message", { ...message, roomId });
   });
 
   socket.on("send_group_message", ({ roomId, message }) => {
-    const messageWithRoom = { ...message, roomId };
-    io.to(roomId).emit("receive_message", messageWithRoom);
+    io.to(roomId).emit("receive_message", { ...message, roomId });
   });
 
   socket.on("disconnect", () => {
@@ -90,6 +89,5 @@ io.on("connection", (socket) => {
   });
 });
 
-// === Start Server ===
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
