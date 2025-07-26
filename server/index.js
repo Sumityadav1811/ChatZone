@@ -11,36 +11,60 @@ import { Server } from "socket.io";
 dotenv.config();
 const app = express();
 
+// === DYNAMIC CORS HANDLING ===
+const allowedOrigins = ["http://localhost:5173"];
+
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://chatozone.netlify.app"],
+    origin: (origin, callback) => {
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        /https:\/\/.*\.netlify\.app$/.test(origin)
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
 
 app.use(express.json());
 
+// === HTTP + Socket.IO setup ===
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", "https://chatozone.netlify.app"],
+    origin: (origin, callback) => {
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        /https:\/\/.*\.netlify\.app$/.test(origin)
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by Socket.io CORS"));
+      }
+    },
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
-connectDB(); // still connecting DB for other routes
-
+// === DB + Routes ===
+connectDB();
 app.use("/api/users", userRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/rooms", roomRoutes);
 
+// === Socket.IO events ===
 io.on("connection", (socket) => {
   const userId = socket.handshake.query.user_name;
   console.log("✅ User connected:", userId);
 
-  // --- JOIN ROOM (both group or 1-1) ---
   socket.on("join_private", (roomId) => {
     socket.join(roomId);
     console.log(`👤 ${userId} joined private room: ${roomId}`);
@@ -52,7 +76,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send_private_message", ({ roomId, message }) => {
-    const messageWithRoom = { ...message, roomId }; // add roomId here
+    const messageWithRoom = { ...message, roomId };
     io.to(roomId).emit("receive_message", messageWithRoom);
   });
 
@@ -66,5 +90,6 @@ io.on("connection", (socket) => {
   });
 });
 
+// === Start Server ===
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
