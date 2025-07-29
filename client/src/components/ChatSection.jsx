@@ -68,11 +68,13 @@ const ChatSection = () => {
             content: input,
             sender: SelectedUser._id,
             roomid: SelectedRoom._id,
+            time: new Date(),
           }
         : {
             content: input,
             sender: SelectedUser._id,
             receiver: SelectedRoom._id,
+            time: new Date(),
           };
       if (input.trim()) {
         const response = await axios.post(`${API}/api/messages/send`, data);
