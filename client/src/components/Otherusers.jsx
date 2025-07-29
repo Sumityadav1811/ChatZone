@@ -5,6 +5,7 @@ import userContext from "./userContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import CreateGroup from "./CreateGroup";
+import { IoCreateOutline } from "react-icons/io5";
 
 const Friends = () => {
   const API = import.meta.env.VITE_API_BASE_URL;
@@ -58,15 +59,23 @@ const Friends = () => {
   }, [SelectedUser]);
   return (
     <div className="flex flex-col justify-between h-full pr-4">
-      <div>
-        <h1 className=" text-2xl font-semibold">Chats</h1>
+      <div className="flex justify-between items-center">
+        <h1 className=" text-2xl font-semibold ">Chats</h1>
+        <button
+          onClick={() => {
+            setcreategroup((prev) => !prev);
+          }}
+          className="font-medium"
+        >
+          Create Group
+        </button>
       </div>
 
       <div>
         <input
           type="text"
           placeholder="Search for a Chat "
-          className="bg-[#4c4e4e] rounded-md px-3 h-8 my-3"
+          className="bg-[#4c4e4e] rounded-md px-3 h-8 my-3 w-full"
         />
       </div>
       <div className="flex flex-col flex-1 overflow-y-auto">
@@ -114,13 +123,6 @@ const Friends = () => {
           className=" text-red-600  rounded-lg bg-[#494a4a] px-3 py-2"
         >
           Logout
-        </button>
-        <button
-          onClick={() => {
-            setcreategroup((prev) => !prev);
-          }}
-        >
-          Create Group
         </button>
       </div>
       {creategroup && (

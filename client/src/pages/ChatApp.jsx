@@ -7,9 +7,9 @@ const ChatApp = () => {
   const { SelectedRoom, setSelectedRoom } = useContext(userContext);
   return (
     <>
-      <div className="bg-[#2E2F2F] text-white h-screen md:hidden p-6">
+      <div className="bg-[#2E2F2F] text-white h-screen md:hidden p-6 ">
         {/* Mobile layout (below md) */}
-        <div className=" md:hidden h-full">
+        <div className=" md:hidden  h-full">
           {!SelectedRoom && <Friends />}
           {SelectedRoom && <ChatSection />}
         </div>
