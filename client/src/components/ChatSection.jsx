@@ -2,12 +2,14 @@ import React, { useState, useContext, useEffect } from "react";
 import userContext from "./userContext";
 import axios from "axios";
 import img from "../assets/bg.png";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 const ChatSection = () => {
   const API = import.meta.env.VITE_API_BASE_URL;
   const [input, setinput] = useState("");
   const [messages, setMessages] = useState([]);
-  const { SelectedRoom, SelectedUser, socket } = useContext(userContext);
+  const { SelectedRoom, SelectedUser, socket, setSelectedRoom } =
+    useContext(userContext);
 
   const fetchchats = async () => {
     try {
@@ -122,6 +124,14 @@ const ChatSection = () => {
   ) : (
     <div className="flex flex-col justify-between h-full">
       <div className="flex px-5 gap-10 items-center py-3 pt-0">
+        <div
+          className="md:hidden "
+          onClick={() => {
+            setSelectedRoom(null);
+          }}
+        >
+          <IoMdArrowRoundBack />
+        </div>
         <div>
           <img
             src="https://avatar.iran.liara.run/public/boy "

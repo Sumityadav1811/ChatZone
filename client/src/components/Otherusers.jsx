@@ -57,7 +57,7 @@ const Friends = () => {
     }
   }, [SelectedUser]);
   return (
-    <div className="flex flex-col justify-between h-full">
+    <div className="flex flex-col justify-between h-full pr-4">
       <div>
         <h1 className=" text-2xl font-semibold">Chats</h1>
       </div>
